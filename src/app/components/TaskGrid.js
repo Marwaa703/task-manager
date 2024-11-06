@@ -1,41 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TaskCard from "./TaskCard";
 import TaskModal from "./TaskModal";
 import { Button, Divider } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-
-const handleFetchError = async (response) => {
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Something went wrong");
-  }
-  return response.json();
-};
-
-export default function TaskGrid({ tasks, filter, setTasks }) {
+export default function TaskGrid({
+  tasks,
+  filter,
+  setTasks,
+  updateTask,
+  deleteTask,
+  addTask,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTask, setEditTask] = useState(null);
 
   const handleEditTask = async (updatedTask) => {
     try {
-      const response = await fetch(`/api/tasks/${updatedTask.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTask),
-      });
-      const updatedTaskData = await handleFetchError(response);
-
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === updatedTaskData.id ? updatedTaskData : task
-        )
-      );
-
-      localStorage.setItem(
-        "tasks",
-        JSON.stringify([...tasks, updatedTaskData])
-      );
+      updateTask(updatedTask);
     } catch (error) {
       console.error("Failed to update task:", error.message);
     }
@@ -43,18 +25,7 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
 
   const handleDeleteTask = async (id) => {
     try {
-      const response = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
-      const deletedTask = await handleFetchError(response);
-
-      setTasks((prevTasks) =>
-        prevTasks.filter((task) => task.id !== deletedTask.id)
-      );
-
-      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      const updatedTasks = storedTasks.filter(
-        (task) => task.id !== deletedTask.id
-      );
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+      deleteTask(id);
     } catch (error) {
       console.error("Failed to delete task:", error.message);
     }
@@ -62,20 +33,7 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
 
   const handleAddTask = async (newTask) => {
     try {
-      const response = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTask),
-      });
-      const addedTask = await handleFetchError(response);
-
-      setTasks((prevTasks) => [...prevTasks, addedTask]);
-
-      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      localStorage.setItem(
-        "tasks",
-        JSON.stringify([...storedTasks, addedTask])
-      );
+      addTask(newTask);
     } catch (error) {
       console.error("Failed to add task:", error.message);
     }
@@ -98,13 +56,6 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
     if (filter === "all") return true;
     return filter === "completed" ? task.completed : !task.completed;
   });
-
-  useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    if (storedTasks) {
-      setTasks(storedTasks);
-    }
-  }, [setTasks]);
 
   return (
     <div className="flex flex-col p-6 flex-1">

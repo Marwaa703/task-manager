@@ -13,16 +13,23 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    if (storedTasks) {
-      setTasks(storedTasks);
-    }
-
+    fetchTasksFromLocalStorage();
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const fetchTasksFromLocalStorage = () => {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  };
+
+  const saveTasksToLocalStorage = (tasks) => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  };
 
   const handleSidebarToggle = () => setSidebarVisible(!sidebarVisible);
 
@@ -30,6 +37,26 @@ export default function Home() {
     if (isMobile && sidebarVisible && e.target.id === "backdrop") {
       setSidebarVisible(false);
     }
+  };
+
+  const updateTaskInLocalStorage = (updatedTask) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === updatedTask.id ? updatedTask : task
+    );
+    setTasks(updatedTasks);
+    saveTasksToLocalStorage(updatedTasks);
+  };
+
+  const deleteTaskFromLocalStorage = (taskId) => {
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+    saveTasksToLocalStorage(updatedTasks);
+  };
+
+  const addTaskToLocalStorage = (newTask) => {
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
+    saveTasksToLocalStorage(updatedTasks);
   };
 
   return (
@@ -77,7 +104,14 @@ export default function Home() {
             isMobile ? "mt-16" : "ml-64"
           } overflow-y-auto`}
         >
-          <TaskGrid tasks={tasks} filter={filter} setTasks={setTasks} />
+          <TaskGrid
+            tasks={tasks}
+            filter={filter}
+            setTasks={setTasks}
+            updateTask={updateTaskInLocalStorage}
+            deleteTask={deleteTaskFromLocalStorage}
+            addTask={addTaskToLocalStorage}
+          />
         </div>
       </div>
     </div>
