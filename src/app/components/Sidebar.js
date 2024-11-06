@@ -1,11 +1,14 @@
+import { useState } from "react";
 import Image from "next/image";
 import {
   FaTasks,
   FaListAlt,
   FaCheckCircle,
   FaSignOutAlt,
+  FaPen,
 } from "react-icons/fa";
-import { Divider } from "antd";
+import { Divider, Modal, Input } from "antd";
+import AvatarSelection from "./AvatarSelection";
 
 export default function Sidebar({
   onFilterChange,
@@ -13,11 +16,21 @@ export default function Sidebar({
   setActiveTab,
   isMobile,
 }) {
+  const [userName, setUserName] = useState("User Name");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
+  const [userAvatar, setUserAvatar] = useState("/profile.png");
+
   const navItems = [
     { id: "all", label: "All Tasks", icon: <FaTasks /> },
     { id: "incomplete", label: "Uncompleted", icon: <FaListAlt /> },
     { id: "completed", label: "Completed", icon: <FaCheckCircle /> },
   ];
+
+  const handleAvatarChange = (newAvatar) => {
+    setUserAvatar(newAvatar);
+    setIsAvatarModalVisible(false);
+  };
 
   return (
     <div
@@ -28,14 +41,38 @@ export default function Sidebar({
       }`}
     >
       <div className="flex flex-col items-center">
-        <Image
-          src="/profile.png"
-          alt="User Profile"
-          className="w-16 h-16 rounded-full mb-4"
-          width={500}
-          height={500}
-        />
-        <h2 className="text-lg font-semibold">User Name</h2>
+        <div className="relative w-24 h-24 mb-4">
+          <Image
+            src={userAvatar}
+            alt="User Profile"
+            className="rounded-full cursor-pointer"
+            width={700}
+            height={700}
+            onClick={() => setIsAvatarModalVisible(true)}
+          />
+          <FaPen
+            className="absolute bottom-2 right-2 text-gray-200 bg-gray-700 p-1 rounded-full cursor-pointer hover:text-white"
+            size={18}
+            onClick={() => setIsAvatarModalVisible(true)}
+          />
+        </div>
+
+        {isEditingName ? (
+          <Input
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+            onBlur={() => setIsEditingName(false)}
+            className="text-lg font-semibold text-center bg-gray-800 text-white"
+            autoFocus
+          />
+        ) : (
+          <h2
+            className="text-lg font-semibold cursor-pointer"
+            onClick={() => setIsEditingName(true)}
+          >
+            {userName}
+          </h2>
+        )}
       </div>
       <Divider />
       <nav className="flex flex-col space-y-4 mt-8">
@@ -60,6 +97,16 @@ export default function Sidebar({
       <button className="flex items-center space-x-2 text-red-500 hover:text-red-600 mt-auto">
         <FaSignOutAlt /> <span>Sign Out</span>
       </button>
+
+      <Modal
+        title="Choose Your Avatar"
+        open={isAvatarModalVisible}
+        onCancel={() => setIsAvatarModalVisible(false)}
+        footer={null}
+      >
+        <Divider />
+        <AvatarSelection onAvatarSelect={handleAvatarChange} />
+      </Modal>
     </div>
   );
 }
