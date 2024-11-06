@@ -14,6 +14,7 @@ export default function TaskModal({
     date: "",
     completed: false,
   });
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     if (editTask) {
@@ -25,7 +26,10 @@ export default function TaskModal({
 
   const handleSave = async () => {
     if (!task.title || !task.description || !task.date) {
-      message.error("Please fill in all required fields.");
+      messageApi.open({
+        type: "error",
+        content: "Please fill in all required fields.",
+      });
       return;
     }
 
@@ -35,50 +39,54 @@ export default function TaskModal({
   };
 
   return (
-    <Modal
-      title={editTask ? "Edit Task" : "Add New Task"}
-      open={isModalOpen}
-      onOk={handleSave}
-      onCancel={() => {
-        setIsModalOpen(false);
-        setTask({ title: "", description: "", date: "", completed: false });
-      }}
-      okText={editTask ? "Save Changes" : "Add Task"}
-    >
-      <div>
-        <Input
-          placeholder="Task Title"
-          value={task.title}
-          onChange={(e) => setTask({ ...task, title: e.target.value })}
-          required
-        />
-      </div>
-      <div style={{ marginTop: "8px" }}>
-        <Input
-          placeholder="Task Description"
-          value={task.description}
-          onChange={(e) => setTask({ ...task, description: e.target.value })}
-          required
-        />
-      </div>
-      <div style={{ marginTop: "8px" }}>
-        <DatePicker
-          placeholder="Task Date"
-          value={task.date ? dayjs(task.date) : null}
-          onChange={(date, dateString) =>
-            setTask({ ...task, date: dateString })
-          }
-          required
-        />
-      </div>
-      <div style={{ marginTop: "8px" }}>
-        <Checkbox
-          checked={task.completed}
-          onChange={(e) => setTask({ ...task, completed: e.target.checked })}
-        >
-          Completed
-        </Checkbox>
-      </div>
-    </Modal>
+    <>
+      {contextHolder}
+
+      <Modal
+        title={editTask ? "Edit Task" : "Add New Task"}
+        open={isModalOpen}
+        onOk={handleSave}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setTask({ title: "", description: "", date: "", completed: false });
+        }}
+        okText={editTask ? "Save Changes" : "Add Task"}
+      >
+        <div>
+          <Input
+            placeholder="Task Title"
+            value={task.title}
+            onChange={(e) => setTask({ ...task, title: e.target.value })}
+            required
+          />
+        </div>
+        <div style={{ marginTop: "8px" }}>
+          <Input
+            placeholder="Task Description"
+            value={task.description}
+            onChange={(e) => setTask({ ...task, description: e.target.value })}
+            required
+          />
+        </div>
+        <div style={{ marginTop: "8px" }}>
+          <DatePicker
+            placeholder="Task Date"
+            value={task.date ? dayjs(task.date) : null}
+            onChange={(date, dateString) =>
+              setTask({ ...task, date: dateString })
+            }
+            required
+          />
+        </div>
+        <div style={{ marginTop: "8px" }}>
+          <Checkbox
+            checked={task.completed}
+            onChange={(e) => setTask({ ...task, completed: e.target.checked })}
+          >
+            Completed
+          </Checkbox>
+        </div>
+      </Modal>
+    </>
   );
 }
