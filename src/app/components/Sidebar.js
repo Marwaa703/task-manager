@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   FaTasks,
@@ -16,10 +16,28 @@ export default function Sidebar({
   setActiveTab,
   isMobile,
 }) {
-  const [userName, setUserName] = useState("User Name");
+  const [userName, setUserName] = useState("ُEnter Your Name");
   const [isEditingName, setIsEditingName] = useState(false);
   const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
   const [userAvatar, setUserAvatar] = useState("/profile.png");
+
+  useEffect(() => {
+    const savedUserName = localStorage.getItem("userName");
+    const savedUserAvatar = localStorage.getItem("userAvatar");
+
+    if (savedUserName) {
+      setUserName(savedUserName);
+    }
+
+    if (savedUserAvatar) {
+      setUserAvatar(savedUserAvatar);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("userName", userName);
+    localStorage.setItem("userAvatar", userAvatar);
+  }, [userName, userAvatar]);
 
   const navItems = [
     { id: "all", label: "All Tasks", icon: <FaTasks /> },
@@ -62,7 +80,7 @@ export default function Sidebar({
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
             onBlur={() => setIsEditingName(false)}
-            className="text-lg font-semibold text-center bg-gray-800 text-white"
+            className="text-lg font-semibold text-center bg-gray-800 text-black"
             autoFocus
           />
         ) : (

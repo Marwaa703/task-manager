@@ -63,7 +63,7 @@ export default function TaskGrid({
   return (
     <div className="flex flex-col p-6 flex-1">
       <div className="w-full flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Tasks Manager</h2>
+        <h2 className="text-2xl font-bold">Task Manager</h2>
         <Button
           type="primary"
           icon={<PlusOutlined />}
