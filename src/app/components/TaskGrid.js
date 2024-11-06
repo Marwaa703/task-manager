@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TaskCard from "./TaskCard";
 import TaskModal from "./TaskModal";
 import { Button, Divider } from "antd";
@@ -25,10 +25,16 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
         body: JSON.stringify(updatedTask),
       });
       const updatedTaskData = await handleFetchError(response);
+
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === updatedTaskData.id ? updatedTaskData : task
         )
+      );
+
+      localStorage.setItem(
+        "tasks",
+        JSON.stringify([...tasks, updatedTaskData])
       );
     } catch (error) {
       console.error("Failed to update task:", error.message);
@@ -39,9 +45,16 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
     try {
       const response = await fetch(`/api/tasks/${id}`, { method: "DELETE" });
       const deletedTask = await handleFetchError(response);
+
       setTasks((prevTasks) =>
         prevTasks.filter((task) => task.id !== deletedTask.id)
       );
+
+      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      const updatedTasks = storedTasks.filter(
+        (task) => task.id !== deletedTask.id
+      );
+      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } catch (error) {
       console.error("Failed to delete task:", error.message);
     }
@@ -55,7 +68,14 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
         body: JSON.stringify(newTask),
       });
       const addedTask = await handleFetchError(response);
+
       setTasks((prevTasks) => [...prevTasks, addedTask]);
+
+      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      localStorage.setItem(
+        "tasks",
+        JSON.stringify([...storedTasks, addedTask])
+      );
     } catch (error) {
       console.error("Failed to add task:", error.message);
     }
@@ -78,6 +98,13 @@ export default function TaskGrid({ tasks, filter, setTasks }) {
     if (filter === "all") return true;
     return filter === "completed" ? task.completed : !task.completed;
   });
+
+  useEffect(() => {
+    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    if (storedTasks) {
+      setTasks(storedTasks);
+    }
+  }, [setTasks]);
 
   return (
     <div className="flex flex-col p-6 flex-1">

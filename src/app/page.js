@@ -13,18 +13,16 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    fetchTasks();
+    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    if (storedTasks) {
+      setTasks(storedTasks);
+    }
+
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const fetchTasks = async () => {
-    const response = await fetch("/api/tasks");
-    const data = await response.json();
-    setTasks(data);
-  };
 
   const handleSidebarToggle = () => setSidebarVisible(!sidebarVisible);
 
