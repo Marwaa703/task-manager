@@ -20,10 +20,10 @@ A task manager web application built using **Next.js**, **Tailwind CSS**, and **
 
 ## Usage
 
--Add new tasks with titles, descriptions, and completion status.
--Edit existing tasks by clicking on the task card and making changes.
--Delete tasks by clicking the delete button on the task card.
--Filter tasks based on completion status (All, Completed, Uncompleted).
+- Add new tasks with titles, descriptions, and completion status.
+- Edit existing tasks by clicking on the task card and making changes.
+- Delete tasks by clicking the delete button on the task card.
+- Filter tasks based on completion status (All, Completed, Uncompleted).
 
-##Demo 
--You can use the demo here https://task-manager-six-azure.vercel.app/
+## Demo 
+- You can use the demo here https://task-manager-six-azure.vercel.app/
