@@ -25,6 +25,7 @@ export default function TaskGrid({
 
   const handleDeleteTask = async (id) => {
     try {
+      console.log(id);
       deleteTask(id);
     } catch (error) {
       console.error("Failed to delete task:", error.message);
@@ -56,6 +57,8 @@ export default function TaskGrid({
     if (filter === "all") return true;
     return filter === "completed" ? task.completed : !task.completed;
   });
+
+  console.log(filteredTasks);
 
   return (
     <div className="flex flex-col p-6 flex-1">

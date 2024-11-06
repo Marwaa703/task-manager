@@ -54,7 +54,12 @@ export default function Home() {
   };
 
   const addTaskToLocalStorage = (newTask) => {
-    const updatedTasks = [...tasks, newTask];
+    const newTaskWithId = {
+      ...newTask,
+      id: Date.now(),
+    };
+
+    const updatedTasks = [...tasks, newTaskWithId];
     setTasks(updatedTasks);
     saveTasksToLocalStorage(updatedTasks);
   };
@@ -88,7 +93,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Sidebar for Desktop */}
         {!isMobile && (
           <Sidebar
             onFilterChange={setFilter}
@@ -98,7 +102,6 @@ export default function Home() {
           />
         )}
 
-        {/* Main Content */}
         <div
           className={`flex-1 p-6 ${
             isMobile ? "mt-16" : "ml-64"

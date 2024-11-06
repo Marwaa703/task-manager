@@ -2,10 +2,20 @@ import { Popconfirm, Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export default function TaskCard({ task, onEdit, onDelete }) {
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(date).toLocaleDateString(undefined, options); 
+  };
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105">
       <h3 className="text-xl font-bold text-white mb-2">{task.title}</h3>
       <p className="text-gray-300 text-sm mb-4">{task.description}</p>
+
+      <p className="text-gray-400 text-sm mb-4">
+        {task.date ? `Date: ${formatDate(task.date)}` : "No date available"}
+      </p>
+
       <div className="mt-2 flex justify-between items-center">
         <span
           className={`text-lg font-medium ${

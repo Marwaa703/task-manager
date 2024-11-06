@@ -5,6 +5,7 @@ import {
   FaCheckCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { Divider } from "antd";
 
 export default function Sidebar({
   onFilterChange,
@@ -36,7 +37,7 @@ export default function Sidebar({
         />
         <h2 className="text-lg font-semibold">User Name</h2>
       </div>
-
+      <Divider />
       <nav className="flex flex-col space-y-4 mt-8">
         {navItems.map((item) => (
           <button
