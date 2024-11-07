@@ -16,7 +16,7 @@ export default function Sidebar({
   setActiveTab,
   isMobile,
 }) {
-  const [userName, setUserName] = useState("ُEnter Your Name");
+  const [userName, setUserName] = useState("Enter Your Name");
   const [isEditingName, setIsEditingName] = useState(false);
   const [isAvatarModalVisible, setIsAvatarModalVisible] = useState(false);
   const [userAvatar, setUserAvatar] = useState("/profile.png");
